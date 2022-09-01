@@ -36,3 +36,23 @@ class WorkshopPipelineStack(Stack):
 
         deploy = WorkshopPipelineStage(scope=self, id='Deploy')
         deploy_stage = pipeline.add_stage(stage=deploy)
+        
+        deploy_stage.add_post(
+            steps=pipelines.ShellStep(
+                id='TestViewerEndpoint',
+                env_from_cfn_outputs={ 'ENDPOINT_URL' : deploy.hc_endpoint }, 
+                commands=["curl -Ssf $ENDPOINT_URL"],
+            )
+        )
+
+        deploy_stage.add_post(
+            steps=pipelines.ShellStep(
+                id='TestAPIGatewayEndpoint',
+                env_from_cfn_outputs={ 'ENDPOINT_URL' : deploy.hc_viewer_url },
+                commands=[
+                    "curl -Ssf $ENDPOINT_URL",
+                    "curl -Ssf $ENDPOINT_URL/hello"
+                    "curl -Ssf $ENDPOINT_URL/test"
+                ]
+            )
+        )
