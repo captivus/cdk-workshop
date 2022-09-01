@@ -12,16 +12,16 @@ from cdk_dynamo_table_view import TableViewer
 
 class CdkWorkshopStack(Stack):
 
+    @property
+    def hc_endpoint(self):
+        return self._hc_endpoint
+
+    @property
+    def hc_viewer_url(self):
+        return self._hc_viewer_url
+
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
-
-        @property
-        def hc_endpoint(self):
-            return self._hc_endpoint
-
-        @property
-        def hc_viewer_url(self):
-            return self._hc_viewer_url
 
         # Defines an AWS Lambda resource
         my_lambda = _lambda.Function(
